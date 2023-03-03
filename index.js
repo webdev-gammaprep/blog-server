@@ -1,10 +1,17 @@
 const express = require('express')
 const fs = require('fs')
+const cors = require('cors')
 const app = express()
 const port = 3000
+
+
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 app.use(express.json())
 
 const base = '/api/v1/post';
+
 app.get(base + '/all', (req, res) => {
   var blogs = JSON.parse(fs.readFileSync('blogs.json').toString());
   res.json(blogs)
@@ -19,6 +26,7 @@ app.get(base + '/:id', (req, res) => {
 
 app.post(base, (req, res) => {
   var blogs = JSON.parse(fs.readFileSync('blogs.json').toString());
+  req.body.id = blogs.length + 1;
   blogs = [...blogs, req.body];
   fs.writeFileSync('blogs.json', JSON.stringify(blogs, null ,2));
   res.send('Post added!');
