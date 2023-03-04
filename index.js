@@ -26,10 +26,18 @@ app.get(base + '/:id', (req, res) => {
 
 app.post(base, (req, res) => {
   var blogs = JSON.parse(fs.readFileSync('blogs.json').toString());
-  req.body.id = blogs.length + 1;
+  req.body.id = blogs[blogs.length-1].id + 1;
   blogs = [...blogs, req.body];
   fs.writeFileSync('blogs.json', JSON.stringify(blogs, null ,2));
   res.send('Post added!');
+})
+
+app.delete(base + '/:id', (req, res) => {
+  var blogs = JSON.parse(fs.readFileSync('blogs.json').toString());
+  var postId = req.params.id;
+  blogs = blogs.filter(p => p.id != postId);
+  fs.writeFileSync('blogs.json', JSON.stringify(blogs, null ,2));
+  res.send('Post deleted!');
 })
 
 app.listen(port, () => {
